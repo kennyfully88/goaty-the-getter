@@ -1,4 +1,4 @@
-# Goath the Getter Web
+# Goaty the Getter Web
 https://kennyfully88.github.io/goaty_the_getter_web/
 
 I'll level with you guys. This is a work in progess, but I thhought that I should release something so that people can play it a little.
