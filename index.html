@@ -1,49 +1,775 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <base href="https://kennyfully88.github.io/goaty_the_getter_web/" />
+<html lang="en">
 
-    <meta charset="UTF-8" />
-    <meta content="IE=Edge" http-equiv="X-UA-Compatible" />
-    <meta
-      name="description"
-      content="In this game, you will help Goat by collecting falling berries in order to gain points. You can do this by tapping or pressing the left or right of the game screen so that Goaty can move. However, watch out for falling monkeys! If a falling monkey bumps into Goaty, Goaty will lose a heart. When Goaty loses all the hearts, it's game over. How many points can you help Goaty get before game over?"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport"
+    content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <!-- This is the web app icon. -->
+  <!-- これは Web アプリのアイコンです。 -->
+  <link rel="icon" type="image/x-icon"
+    href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAOpJREFUOI2VksGNhDAMRV/QtpA7DVAEDdADTUwR08SWsFIuU0IK4MgcuKcIzwEcghNG2i9Fshy/72Ds2CWcckUsX3IArgMkpYSeo0AAkTmwjvMlp3UhBAD5wegwwXvfzAPEGHPcaWCBO8UYmaapNgghZBPt8N7+mvDxfOAcTh5MeamdWjnly+lejADS0gPgh81+iasCQBS40+9rN3o8TrazRX7YWh3xw6bgRZXBf/XV4O41pepFKuZgY51BS7KOc15XPes43+Yxf4wise/80mfg+cQCFZwv0tJnOC19CTe72kUq3V0JmKXK3AdaKIpUGuZZjAAAAABJRU5ErkJggg==" />
+  <!-- This is the CSS style sheet for the web app. -->
+  <!-- これは Web アプリの CSS スタイル シートです。 -->
+  <style>
+    * {
+      box-sizing: border-box;
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
 
-    <!-- iOS meta tags & icons -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-    <meta name="apple-mobile-web-app-title" content="goaty_the_getter" />
-    <link rel="apple-touch-icon" href="icons/Icon-192.png" />
+    body {
+      align-items: center;
+      background-color: #000000;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      justify-content: center;
+    }
 
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="favicon.png" />
+    .game-box {
+      background-color: #a2fff3;
+      image-rendering: pixelated;
+    }
 
-    <title>goaty_the_getter</title>
-    <link rel="manifest" href="manifest.json" />
+    @media (orientation: landscape) {
+      .game-box {
+        height: 100%;
+      }
+    }
 
-    <script>
-      // The value below is injected by flutter build, do not touch.
-      const serviceWorkerVersion = '4065838603';
-    </script>
-    <!-- This script adds the flutter initialization JS code -->
-    <script src="flutter.js" defer></script>
-  </head>
-  <body>
-    <script>
-      window.addEventListener('load', function (ev) {
-        // Download main.dart.js
-        _flutter.loader.loadEntrypoint({
-          serviceWorker: {
-            serviceWorkerVersion: serviceWorkerVersion,
-          },
-          onEntrypointLoaded: function (engineInitializer) {
-            engineInitializer.initializeEngine().then(function (appRunner) {
-              appRunner.runApp();
-            });
-          },
-        });
-      });
-    </script>
-  </body>
+    @media (orientation: portrait) {
+      .game-box {
+        width: 100%;
+      }
+    }
+  </style>
+  <!-- This is the web app's title that shows on tabs. -->
+  <!-- これはタブに表示される Web アプリのタイトルです。 -->
+  <title>Goaty the Getter</title>
+</head>
+
+<body>
+  <!-- This canvas has the game-box class and is 160x160 pixels. -->
+  <!-- This canvas will be used for rendering the game. -->
+  <!-- このキャンバスは game-box クラスを持ち、160x160 ピクセルです。 -->
+  <!-- このキャンバスはゲームのレンダリングに使用されます。 -->
+  <canvas class="game-box" width="160" height="160"></canvas>
+</body>
+
 </html>
+
+<script>
+  const gameImages = {
+    berry: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADAAAAAgCAYAAABU1PscAAAAAXNSR0IArs4c6QAAAh9JREFUWIXtl7FOQjEYhT+MKwmD7rg5aKKPwMggiYs7vgGLo4OjC2+gu4vJZWDkESDBwU13HEh4gDpg69+f9l5uQQHjSRhoe/57Tk97c3/YcVTUf5M4tzFIIaYza7g/3epAzufNbRQLAl/7Q/pXUztnxDrTfKpx3DwHoiZ+PUEvATXuTAmxuQI3keCeEmR/JrDWqDXenExQGTZApVsd8NofAvC1NvSM0gjtgjHtbD752AIgq50B0JqOYhwtKCVBXSd2BL3x/Zh4Hi4wZG6i93xLVjujNR3ZJDRix1GOFR0badqrocZdHe+hUjzXvYXqvedboDiJ1AQ7s4Z8iaASxL5E5B3aC5ZKh59gO8O0My4u76SRYDpWrBUfgjJmIGYgsPtlxesaBSYq3erA7bSrI2BTFOt+JIFVUIFv8cYYJ9aOWRNE7sCcF3AP5c9/Aj/pDuq3UJSUiiS+EF/ED+4EeHEBznWMsy6+uxs5fK/GUsWWWLuN/N3Axr8mV8V/P6Dq/fcDZfE3+4HJuA7A4ek7APf384mbmyhHC/q1fkB/CznxBydvTMZ1JuM67WZdGont3CoJujWdWUMm5H5q3HtoUPzHy9FC9cf+O1CcRGqCW9EPJCa43n4gtPtLIDfBAhNeP2DrSNgUt74fsOJlP2DHrAnEMVy46SH3UP78J/CT7mBhP2BJqUjhS/FF/Gg/IOICnOsYZ118dzdy+F6Nne8HPgFlMavkYdwkRQAAAABJRU5ErkJggg==',
+    floratrap: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAYCAYAAACbU/80AAAAAXNSR0IArs4c6QAAAs5JREFUSImtlkFIVFEUhr+nCZkEbYqYdoYaxCCIMwkSaJtZtUoNVxHjCIogtJAJ2whF4SKKxMIZW0mhtQuKARndBDlObYYom3i7aZGIizBBy9di5t7uvXPfOIpn9d6955zvv+ecd2cc7Ob5rDs+64c2NaGEeq8e2517R49cjEjiedcboUcBvDZEGHvOvHskIhwbvOX+S6vz2u3+g4gw22j1O+YHMkVo8CqAZhud3lGrIL0FwnpGsZrSFuP0h26hNoTNbR0ArDX9tPJb8mcA+PbpQ0X4QVpo9sXbXQ5y8VaDNcHnh1vUdeVU+H8BUFGECQfsArytWf6sPqKuK8fuchBAPtecPU7thVWrAGfexSZEMwUsYqwCAJyGKN56Z/H59Hu89U72NnZsAqA4gA6lNlZqodI+D2MGykQA8Ps5exs7AH7wstiWywnr5pcXf8tyyEEy38VACjMHz/AvE19tBR3AS2ZjAAy0JzTI4sIcBTfPjfiEtu7jXyYC2LeC2kWUzMYYaE/IC2P4wZSWWPjsY47TEDUqWGtWUFqN+pJaypDMxiRkOj7CeF9EiktmYzydTVWCe0JoCYjxLPelWrEhoKmlDACR7jCTgzkAxmaCEjwULQqylN9TqzPQnkBt4Z03V+Te3atpGeubQAhx3U0NXAmuigfkAfomTgDw7u13AELhAM9uFluitsApJZaJVBMV8Bk8CY50h2V8a/82Jy/9kPBQOEAoHNBirKcwTzA2E5QihqIR3+mvVEEVLE5fJqC5rUPCJgdzTMdHgOLXoK77TLScfOGbWsrgupsSnn5SdFTjNQGLC3Py0xNwgIKb595CsQXjfRHzXtDiheDW/m2tAr9WAvKLUuO1e6Dg5qVTwc1zrrFJ7on1rx9X8LOCm5fP6iyEwgHSpTAzXhOgAk2rBDbjp+NNDA9OAfVAPekVuHb+lDWH7VetGqv2f+C+8f8A7jOJbe7zu34AAAAASUVORK5CYII=',
+    gameOver: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKAAAAA5CAYAAACxpiCmAAAAAXNSR0IArs4c6QAAA0BJREFUeJztm11yhSAMhbXTLbj/BboI+9I7Y7lAfjiQ3Hq+p45KiOEYINzu2zgXwAb5XPaRxl8oLwjx8I0ydJ4nyhT5AI7jgNhhBiShUIAkFAqQhEIBklAoQBIKbBcs0do1PW33XIvD02JwZ7oApe366/5/H4ReHJ4SgxpTp2BUrejT0cbhifGalgG1U00r6CNTttR3eb9nc3TKtPpyHMeb/dq1sr10v9V/C0uMRhg6x/vl2rZ3B0deQMoElmBbkN5B60ervdbvlkClDxjhf69Nw698Z8Ezxdd6Bj19rZwOtcKpZcsWHv8jlgDLdsF3NAK1fp299toM85rqrM9nA+X/indbXgeUstd5nqkGtfRltW/a/lrPRfsvEZIBNWTZEWbxw0t2/5cLsDc1tq5lJSKbtJYJHjJkw7QZ8IUk2Ag/VvclCU7jWwax1ZiyBrSWA7R2ovD64d3doskSxxrhZ8FSm4jglRmn9EOqzfVAiE1T35vlP5ppAkStU7KsCUeyuLd8pLGjFVCWOJZMLcNoSyr3Z7zrGfSXrPF9tERi7c+Cx/+IbDjtKI78b1IfxRGihQIkoVCAJBQKkIRCAZJQKEASCqwMQx4LyzCEEEIIIYQQQgghhJAuiEI0eSb3Awi3jliI9nFtPAGCcP+fEEtAV2dOyNdG8pH+/4JJWiCJ4C7A0qAm69SyZs+x8nl0NhvNlKP+aeJxNa5L96z99NogxlOyp7KlFYu2g9bz0vRutV+2s/hSw+pfTShaH0YFaH1Xq18eu5bx/vOsdxMiDdjV+NtrD+XLrD487ctriDhZbWrfy/L+pj69a0BLCu+1LYW6K57rfbVa2wj/eu3u1Hz0CtoSd21sPLa1iBl2dBPCUsRfrPGoiRqxZCjRfnzLx9MrwIzCiy7PzFxGIPqItN0EVYjet88WAJp968cEFStt3D0Zc8mYRtQBW8HwTBPlemrU9stGbZ02azBmfTja2ISCEmDKlxtgxq63BCFyTfnI8y7LxtM7BUuBsgRSk+ql3WdvqhvNXCgbCDxxQvQ9bSpesW5bNZWNEHXW/LR+3+CvYeJYIYLar3ZSLZf4Y4QYVmcgxOZsCuEOPBjL6cxoPzVSjP0PAyR+TuXuXKIAAAAASUVORK5CYII=',
+    goaty: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAAAQCAYAAACm53kpAAAAAXNSR0IArs4c6QAAAYFJREFUWIXVlsGRwyAMRb8z2wJ3N+Ai3AA9uIkU4Sa2hJ3hsiVQgI/eg+8UwR5sESHA62STcdCMJ8w3TxIyETRYzeNmDRv7HY3r1fIXAN45B3q2CR6A94PB3A+RRvOMMZBajfwHhG1OoJTK6gBgrZVYtfyFBhIombUWWutEr5UPBTDGBCdUoZ/lKwtv2yeyWvmkifCXVKmc9q4898P53K4B0DRCiBy5qQUAqG5JwJy3d+B5D+C86A2Bj44HAkr2+b0mcr1mkzifd25duGiEUVG2OcRf8GRT3ZL7YlDdQom/lKfF5k4K51yiJ8cgBZdfg/Rx/DuJs0wpFfqF1vr2FxA6t/QewBbOi+GmNmzBwwkVivkq3k0tVKfZeEn0cUS0k5ICSIf3Gmfk+EgBz+L93A/hukjP3A9FHXHHrp1fnfCxm9oAjCOSgLkist//8HvxfWbus/KPXoZFiOC7IDEU/AG+GJ/7fYQvxS+exfIoEnrpIkIJ0JwQ8CBfis997ca+N/9fIutHlkNYoNgAAAAASUVORK5CYII=',
+    ground: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAEhJREFUOI1jZGBg+M9AAWCa9ZqBYdZrhACpfMZZryl0ASWah4sB27czMGzfjhAglc8YuGiAYwGeDmDO8vSE0MTyB0FCGvqxAADOSjcAt2uOmAAAAABJRU5ErkJggg==',
+    heartImage: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAKBJREFUOI1jYBhowIjG/0+qHBOyghd+Dgwv/BwYNghxoWvAKceIrAAZnDhyiiHg3TcGBgYGBjxyjEwMWACftweDhY0ZwwYhLpiNDHzeHtiUMrBg0ww3BIvYp6078BuAzTB8AMML6DYQkkOOKpSARLcdphk5ANENwGkILs3YDMAwBAawacZlAIYhuDTjM4CBgYHhPywN4NJMDPjPgJqkqQ8AkAhQfrsHpU8AAAAASUVORK5CYII=',
+    monking: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAS9JREFUOI19kjFywjAQRZ8zHMBNegooUmSGK5iOgiIlpXwIyhzAhzBHYGZdpAtHoKBIYQp6DvFTCDmSkbMzGmml3b/7/6rg2ZS5i62YdADJ2eBcb0cAFvOPwV+eDkneLJvcbv2+Pib+ooa+guXpoExxJGeyciUrVxpbuO8rpymakjNJEpCAWLkSIEmTAD45AhjbcOcsAXkJCN3x0x/qDh8/riCoOwB+zud89cAxrhp301fOU4u6KAD1lfMqR+NafLdJleu6Tt6BMFLfxViHvnIyM5nZX1cp//8nMezROTeBWQ4F8J/nIRrtlq7reMuEhd80oD79xkiDMW+gKADdL3MADl839vsIJCRHojUNuI2Pf32/+aL3y1ybHWoav4hEjUUL75udz+ExxoTCBLXJuF/FvTaUG4g3CQAAAABJRU5ErkJggg==',
+    pointNumbers: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAQCAYAAABA4nAoAAAAAXNSR0IArs4c6QAAAjhJREFUaIHtWlGSwyAIhZ29Qv57gd7/IL1A/nuI7E/MIEFFMGq3eTOdad08QRARNgA3bnwxMDG+VT7/X/ich4VxrVyvHl5eL/mt+N3wK4xt79dDfHh5rhsoF8HnWJ6rVievfBc/cLm+qfEUPwWFHZroP0p+A35X/LDfSeUBDuNqTxkLvPJH6+/FaP0j+ctzjQKm1v4GfjQX+7TAaT4pAxwIypdOlavglT+L/l7+CP132bh/zwbmFXwAfdaFigB5vx5hvg0AMBkALRbgwQwOgDYnjynlc/0reRFGHQA9wTOPdAUPYyQI8hlgAJA4+yhAKxyINZslhxabZjc0X48FWq70nMkeVHfr6W3gZ69X5LtoD2njl56ZLQAA4sWd7pRQ3gz87xtLpVcWYcidTmRbCkBt96kVkGbLRCMjp0OWr4HEEfZAkUs3Oq9D6O8ZAyDAsvlnQHRtYWnX3EUjc9bYYIQNxSzc4xpWqhVCUNAg4F2gWeBxHK/0kRWT2StB6FzwjwFIZWvlS7pY+Qa06uIg+6gh2dzphwP89AeYMwBcmz9EuBHccbUOlNp2aHEcWbeJD87T3yjf27rM2dwUUBx8byQDgER7zw5QSla1YQfpDyQAD32/oQsTENbf2/5SkEqZhD+brQFmcJzjP8pD9ffKdnZh3Hd/bxfIwwuo8LX6hkDmRIBzBsimuw8oREfr75V/qhk6F7Fe+S3tb64jlHMeAxJmeRkthatf5irNN/vLZN726Wj9b9y40QN/9hTCO7LC5+oAAAAASUVORK5CYII=',
+  }
+</script>
+
+<script>
+  /**
+  * A delicious berry
+  */
+  class Berry {
+    constructor() {
+      this.type = 'Berry';
+
+      this.destroyed = false;
+      this.destroyTimer = 0;
+
+      this.image = new Image();
+      this.image.src = gameImages.berry;
+
+      // This is used to occasionally spawn rare instances.
+      // これは、珍しいインスタンスを時折生成するために使用されます。
+      this.rare = Math.floor(Math.random() * 100);
+
+      // The speed at which the fruit will fall.
+      // 果物が落ちる速度。
+      this.speed = Math.floor(Math.random() * 2);
+
+      // Destination attributes.
+      // 宛先属性。
+      this.dx = Math.floor(Math.random() * 144);
+      this.dy = -16;
+      this.dw = 16;
+      this.dh = 16;
+
+      // This is rng that will show either a normal berry of a rare berry.
+      // これは、通常のベリーまたは珍しいなベリーのいずれかを表示する RNG です。
+      this.currentAnimation = this.rare <= 89 ? 'normal' : 'rare';
+
+      // This is a guide to get the correct sprite positions.
+      // これは、スプライトの正しい位置を取得するためのガイドです。
+      this.animations = {
+        normal: {sx: 0, sy: 0, sw: 16, sh: 16},
+        rare: {sx: 0, sy: 16, sw: 16, sh: 16},
+        destroyed: {
+          frames: [
+            {
+              sx: 0,
+              sy: this.currentAnimation === 'rare' ? 16 : 0,
+              sw: 16,
+              sh: 16,
+            },
+            {
+              sx: 16,
+              sy: this.currentAnimation === 'rare' ? 16 : 0,
+              sw: 16,
+              sh: 16,
+            },
+            {
+              sx: 32,
+              sy: this.currentAnimation === 'rare' ? 16 : 0,
+              sw: 16,
+              sh: 16,
+            },
+          ],
+        },
+      };
+    }
+
+    render() {
+      if (this.destroyed) {
+        if (this.destroyTimer < 10) {
+          gameBox.ctx.drawImage(
+            this.image,
+            this.animations['destroyed'].frames[0].sx,
+            this.animations['destroyed'].frames[0].sy,
+            this.animations['destroyed'].frames[0].sw,
+            this.animations['destroyed'].frames[0].sh,
+            this.dx,
+            this.dy,
+            this.dw,
+            this.dh,
+          );
+        } else if (this.destroyTimer < 20) {
+          gameBox.ctx.drawImage(
+            this.image,
+            this.animations['destroyed'].frames[1].sx,
+            this.animations['destroyed'].frames[1].sy,
+            this.animations['destroyed'].frames[1].sw,
+            this.animations['destroyed'].frames[1].sh,
+            this.dx,
+            this.dy,
+            this.dw,
+            this.dh,
+          );
+        } else {
+          gameBox.ctx.drawImage(
+            this.image,
+            this.animations['destroyed'].frames[2].sx,
+            this.animations['destroyed'].frames[2].sy,
+            this.animations['destroyed'].frames[2].sw,
+            this.animations['destroyed'].frames[2].sh,
+            this.dx,
+            this.dy,
+            this.dw,
+            this.dh,
+          );
+        }
+      } else {
+        gameBox.ctx.drawImage(
+          this.image,
+          this.animations[this.currentAnimation].sx,
+          this.animations[this.currentAnimation].sy,
+          this.animations[this.currentAnimation].sw,
+          this.animations[this.currentAnimation].sh,
+          this.dx,
+          this.dy,
+          this.dw,
+          this.dh,
+        );
+      }
+    }
+
+    update(options) {
+      if (this.destroyed) {
+        if (this.destroyTimer >= 30) {
+          this.destroy({berries: options.berries});
+        } else {
+          this.destroyTimer++;
+        }
+        return;
+      }
+
+      // If the speed isn't at least 1, the berry won't fall.
+      // 速度が1以上でないとベリーは落ちません。
+      this.dy += this.speed + 1;
+
+      // If this berry is lower than the gameBox, it will destroy itself.
+      // このベリーがゲームボックスよりも低い場合は、ベリー自体が破壊されます。
+      if (this.dy >= 160) {
+        this.destroy({berries: options.berries});
+      }
+    }
+
+    destroy(options) {
+      // This berry will take itself out of the berries array.
+      // このベリーはベリー配列からそれ自身を取り出します。
+      options.berries.splice(options.berries.indexOf(this), 1);
+    }
+
+    action() {
+      if (this.destroyed) return;
+      // Destroy this berry after it is touched by the player.
+      // プレイヤーがこのベリーに触れた後、このベリーは破壊されます。
+      this.destroyed = true;
+
+      if (gameLogic.points < 999999) {
+        // Reward 100 points for getting normal berries and 1000 for rare berries.
+        // 通常のベリーを獲得すると 100 ポイント、珍しいベリーを獲得すると 1000 ポイントを獲得できます。
+        gameLogic.points += this.currentAnimation === 'normal' ? 100 : 1000;
+
+        // Make sure points can't go over 999999.
+        // ポイントが 999999 を超えない。
+        if (gameLogic.points > 999999) gameLogic.points = 999999;
+      }
+    }
+  }
+</script>
+
+<script>
+  class Floratrap {
+    constructor(options) {
+      this.image = new Image();
+      this.image.src = gameImages.floratrap;
+
+      this.dx = options?.dx || 0;
+      this.dy = options?.dy || 120;
+      this.dw = 16;
+      this.dh = 24;
+
+      this.frameCount = 0;
+      this.frameCountMax = 60;
+
+      this.animations = {
+        default: {
+          frames: [
+            {sx: 0, sy: 0, sw: 16, sh: 24},
+            {sx: 16, sy: 0, sw: 16, sh: 24},
+          ],
+        },
+      };
+
+      this.currentAnimaiton = 'default';
+    }
+
+    render() {
+      const currentFrame = Math.floor(
+        this.frameCount /
+        (this.frameCountMax /
+          this.animations[this.currentAnimaiton].frames.length),
+      );
+
+      gameBox.ctx.drawImage(
+        this.image,
+        this.animations[this.currentAnimaiton].frames[currentFrame].sx,
+        this.animations[this.currentAnimaiton].frames[currentFrame].sy,
+        this.animations[this.currentAnimaiton].frames[currentFrame].sw,
+        this.animations[this.currentAnimaiton].frames[currentFrame].sh,
+        this.dx,
+        this.dy,
+        this.dw,
+        this.dh,
+      );
+    }
+
+    update() {
+      if (this.frameCount >= this.frameCountMax - 1) {
+        this.frameCount = 0;
+      } else {
+        this.frameCount++;
+      }
+    }
+  }
+</script>
+
+<script>
+  /**
+  * The game over screen
+  */
+  class GameOver {
+    constructor() {
+      this.image = new Image();
+      this.image.src = gameImages.gameOver;
+    }
+
+    render() {
+      gameBox.ctx.drawImage(this.image, 0, 48, 160, 57);
+    }
+  }
+</script>
+
+<script>
+  /**
+  * Goaty is the player.
+  * プレイヤーは（ヤギの）ゴッティーです。
+  */
+  class Goaty {
+    constructor() {
+      this.image = new Image();
+      this.image.src = gameImages.goaty;
+
+      this.hurt = false;
+      this.inincibleCounter = 0;
+
+      this.dx = 72;
+      this.dy = 128;
+      this.dw = 16;
+      this.dh = 16;
+
+      this.animations = {
+        idle: {sx: 0, sy: 0, sw: 16, sh: 16},
+        left: {sx: 16, sy: 0, sw: 16, sh: 16},
+        right: {sx: 32, sy: 0, sw: 16, sh: 16},
+        hurt: {sx: 48, sy: 0, sw: 16, sh: 16},
+      };
+
+      this.currentAnimation = 'idle';
+    }
+
+    render() {
+      gameBox.ctx.drawImage(
+        this.image,
+        this.animations[this.hurt ? 'hurt' : this.currentAnimation].sx,
+        this.animations[this.hurt ? 'hurt' : this.currentAnimation].sy,
+        this.animations[this.hurt ? 'hurt' : this.currentAnimation].sw,
+        this.animations[this.hurt ? 'hurt' : this.currentAnimation].sh,
+        this.dx,
+        this.dy,
+        this.dw,
+        this.dh,
+      );
+    }
+
+    update(options) {
+      if (this.hurt) {
+        if (this.inincibleCounter > 0) {
+          this.inincibleCounter--;
+        } else {
+          this.hurt = false;
+        }
+      }
+
+      if (controls.direction === 'ArrowLeft') {
+        this.currentAnimation = 'left';
+        if (this.dx > 0) {
+          this.dx--;
+        }
+      }
+
+      if (controls.direction === 'ArrowRight') {
+        this.currentAnimation = 'right';
+        if (this.dx + this.dw < 160) {
+          this.dx++;
+        }
+      }
+
+      if (controls.direction === 'none') {
+        this.currentAnimation = 'idle';
+      }
+
+      // Check collisions of goaty and berries
+      this.checkCollisions(options.berries);
+      // Check collisions of goaty and monkings
+      this.checkCollisions(options.monkings);
+    }
+
+    checkCollisions(objects) {
+      for (let i = 0; i < objects.length; i++) {
+        if (
+          this.dx + this.dw > objects[i].dx &&
+          this.dx < objects[i].dx + objects[i].dw &&
+          this.dy + this.dh > objects[i].dy &&
+          this.dy < objects[i].dy + objects[i].dh
+        ) {
+          // Berry
+          // ベリー
+          if (objects[i]?.type === 'Berry') {
+            objects[i].action();
+          } else if (objects[i].type === 'Monking') {
+            if (!this.hurt) {
+              // This goaty is hurt and needs to recover.
+              // このゴッティーは怪我をしているので回復する必要があります
+              this.hurt = true;
+              this.inincibleCounter = 60;
+              objects[i].action();
+            }
+          }
+        }
+      }
+    }
+  }
+</script>
+
+<script>
+  /**
+  * The ground that Goaty is on
+  */
+  class Ground {
+    constructor() {
+      this.image = new Image();
+      this.image.src = gameImages.ground;
+
+      this.dx = 0;
+      this.dy = 144;
+      this.dw = 160;
+      this.dh = 16;
+    }
+
+    render() {
+      gameBox.ctx.fillStyle = gameBox.ctx.createPattern(this.image, 'repeat');
+      gameBox.ctx.fillRect(this.dx, this.dy, this.dw, this.dh);
+    }
+  }
+</script>
+
+<script>
+  /**
+  * The funny monkey
+  */
+  class Monking {
+    constructor() {
+      this.type = 'Monking';
+
+      this.image = new Image();
+      this.image.src = gameImages.monking;
+
+      this.speed = Math.floor(Math.random() * 3);
+
+      this.dx = Math.floor(Math.random() * 144);
+      this.dy = -16;
+      this.dw = 16;
+      this.dh = 16;
+
+      this.animations = {
+        normal: {sx: 0, sy: 0, sw: 16, sh: 16},
+      };
+
+      this.currentAnimation = 'normal';
+    }
+
+    render() {
+      gameBox.ctx.drawImage(
+        this.image,
+        this.animations[this.currentAnimation].sx,
+        this.animations[this.currentAnimation].sy,
+        this.animations[this.currentAnimation].sw,
+        this.animations[this.currentAnimation].sh,
+        this.dx,
+        this.dy,
+        this.dw,
+        this.dh,
+      );
+    }
+
+    update(options) {
+      this.dy += this.speed + 1;
+
+      if (this.dy >= 160) {
+        this.destroy({monkings: options.monkings});
+      }
+    }
+
+    destroy(options) {
+      options.monkings.splice(options.monkings.indexOf(this), 1);
+    }
+
+    action() {
+      gameLogic.lives--;
+    }
+  }
+</script>
+
+<script>
+  /**
+  * The overlay display of stats in the game
+  */
+  class HUD {
+    constructor() {
+      this.image = new Image();
+      this.image.src = gameImages.pointNumbers;
+      this.heartImage = new Image();
+      this.heartImage.src = gameImages.heartImage;
+      this.dx = 0;
+      this.dy = 0;
+      this.dw = 16;
+      this.dh = 16;
+
+      this.animations = {
+        0: {sx: 0, sy: 0, sw: 16, sh: 16},
+        1: {sx: 16, sy: 0, sw: 16, sh: 16},
+        2: {sx: 32, sy: 0, sw: 16, sh: 16},
+        3: {sx: 48, sy: 0, sw: 16, sh: 16},
+        4: {sx: 64, sy: 0, sw: 16, sh: 16},
+        5: {sx: 80, sy: 0, sw: 16, sh: 16},
+        6: {sx: 96, sy: 0, sw: 16, sh: 16},
+        7: {sx: 112, sy: 0, sw: 16, sh: 16},
+        8: {sx: 128, sy: 0, sw: 16, sh: 16},
+        9: {sx: 144, sy: 0, sw: 16, sh: 16},
+        plus: {sx: 160, sy: 0, sw: 16, sh: 16},
+        pts: {sx: 176, sy: 0, sw: 16, sh: 16},
+      };
+    }
+
+    render() {
+      gameBox.ctx.drawImage(
+        this.image,
+        this.animations.pts.sx,
+        this.animations.pts.sy,
+        this.animations.pts.sw,
+        this.animations.pts.sh,
+        this.dx,
+        this.dy,
+        this.dw,
+        this.dh,
+      );
+
+      const pointsToString = gameLogic.points.toString();
+
+      for (let i = 0; i < pointsToString.length; i++) {
+        gameBox.ctx.drawImage(
+          this.image,
+          this.animations[pointsToString[i]].sx,
+          this.animations[pointsToString[i]].sy,
+          this.animations[pointsToString[i]].sw,
+          this.animations[pointsToString[i]].sh,
+          this.dx + 16 + 16 * i,
+          this.dy,
+          this.dw,
+          this.dh,
+        );
+      }
+
+      gameBox.ctx.fillStyle = gameBox.ctx.createPattern(
+        this.heartImage,
+        'repeat',
+      );
+
+      gameBox.ctx.fillRect(112, 0, 16 * gameLogic.lives, 16);
+    }
+  }
+</script>
+
+<script>
+  /**
+  * The controls of the app
+  */
+  class Controls {
+    constructor() {
+      this.tapped = false;
+
+      this.direction = 'none';
+
+      window.addEventListener('click', () => {
+        if (gameLogic.lives <= 0) {
+          this.tapped = true;
+        }
+      });
+
+      // Keyboard controls
+      // キーボードコントロール
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          this.direction = e.key;
+        }
+      });
+
+      window.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+          this.direction = 'none';
+        }
+      });
+
+      // Touch controls
+      // タッチコントロール
+      gameBox.domRef.addEventListener('touchstart', (e) => {
+        this.setPosition(e);
+
+        if (gameLogic.lives <= 0) {
+          this.tapped = true;
+        }
+      });
+
+      gameBox.domRef.addEventListener('touchmove', (e) => {
+        this.setPosition(e);
+      });
+
+      gameBox.domRef.addEventListener('touchend', () => {
+        this.direction = 'none';
+      });
+    }
+
+    setPosition(e) {
+      const touchPosition =
+        e.touches[0].clientX - gameBox.domRef.getBoundingClientRect().left;
+      const canvasWidth = gameBox.domRef.clientWidth;
+      const gameBoxPosition = Math.floor((touchPosition / canvasWidth) * 100);
+
+      if (gameBoxPosition < 50) {
+        this.direction = 'ArrowLeft';
+      } else {
+        this.direction = 'ArrowRight';
+      }
+    }
+  }
+</script>
+
+<script>
+  /**
+  * The DOM reference that contains the game canvas.
+  * ex: document.querySelector('.game-box');
+  * ゲーム キャンバスを含む DOM 参照。
+  * 例: document.querySelector('.game-box');
+  */
+  class GameBox {
+    constructor(domRef) {
+      this.domRef = domRef;
+      this.ctx = domRef.getContext('2d');
+    }
+  }
+</script>
+
+<script>
+  /**
+  * The game logic
+  */
+  class GameLogic {
+    constructor() {
+      this.points = 0;
+      this.lives = 3;
+    }
+  }
+</script>
+
+<script>
+  /**
+  * The game scene
+  */
+  class Scene {
+    constructor() { }
+
+    // This phase is used to draw on the canvas.
+    // このフェーズは、キャンバス上に描画するために使用されます。
+    render() {
+      // Erase the entire screen before drawing a new frame.
+      // 新しいフレームを描画する前に画面全体を消去します。
+      gameBox.ctx.clearRect(0, 0, gameBox.domRef.width, gameBox.domRef.height);
+      this.ground.render();
+      this.floratraps.forEach((floratrap) => floratrap.render());
+      this.berries.forEach((berry) => berry.render());
+      this.goaty.render();
+      this.monkings.forEach((monking) => monking.render());
+      this.hud.render();
+
+      if (gameLogic.lives <= 0) {
+        this.gameOver.render();
+        this.waitForNewGame();
+        return;
+      }
+
+      this.update();
+    }
+
+    // This phase is used to recalculate everything for the next frame.
+    // このフェーズは、次のフレームのすべてを再計算するために使用されます。
+    update() {
+      this.floratraps.forEach((floratrap) => floratrap.update());
+
+      this.berries.forEach((berry) => berry.update({berries: this.berries}));
+      this.monkings.forEach((monking) =>
+        monking.update({monkings: this.monkings}),
+      );
+
+      this.goaty.update({berries: this.berries, monkings: this.monkings});
+
+      if (this.timer <= 0) {
+        const rng = Math.floor(Math.random() * 5);
+        //  Reset this timer if it is out of time.
+        this.timer = Math.floor(Math.random() * 180) + 10;
+
+        if (rng > 0) {
+          if (this.berries.length < 20) {
+            this.berries.push(new Berry());
+          }
+        } else {
+          if (this.monkings.length < 20) {
+            this.monkings.push(new Monking());
+          }
+        }
+      } else {
+        // Let this timer countdown.
+        // このタイマーをカウントダウンさせます。
+        this.timer--;
+      }
+
+      // This function will loop on every frame.
+      // この関数はフレームごとにループします。
+      requestAnimationFrame(() => {
+        this.render();
+      });
+    }
+
+    start() {
+      this.setGame();
+      this.render();
+    }
+
+    setGame() {
+      controls.tapped = false;
+      gameLogic.points = 0;
+      gameLogic.lives = 3;
+      this.berries = [];
+      this.floratraps = [new Floratrap(), new Floratrap({dx: 144})];
+      this.gameOver = new GameOver();
+      this.goaty = new Goaty();
+      this.ground = new Ground();
+      this.hud = new HUD();
+      this.monkings = [];
+      this.timer = 180;
+    }
+
+    resetGame() {
+      this.setGame();
+      this.start();
+    }
+
+    waitForNewGame() {
+      if (controls.tapped) this.resetGame();
+
+      if (gameLogic.lives <= 0) {
+        requestAnimationFrame(() => {
+          this.waitForNewGame();
+        });
+      }
+    }
+  }
+</script>
+
+<script>
+  'use strict';
+
+  // This comment isn't necessary, but it shows that the file is running correctly.
+  // このコメントは必須ではありませんが、ファイルが正しく実行されていることを示します。
+  console.log('Goaty the Getter JS is working! May GOD bless you!');
+
+  const gameBox = new GameBox(document.querySelector('.game-box'));
+
+  const gameLogic = new GameLogic();
+
+  const controls = new Controls();
+
+  const scene = new Scene();
+
+  scene.start();
+</script>
