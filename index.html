@@ -6,12 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport"
     content="viewport-fit=cover, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <!-- This is the web app icon. -->
-  <!-- これは Web アプリのアイコンです。 -->
   <link rel="icon" type="image/x-icon"
     href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAOpJREFUOI2VksGNhDAMRV/QtpA7DVAEDdADTUwR08SWsFIuU0IK4MgcuKcIzwEcghNG2i9Fshy/72Ds2CWcckUsX3IArgMkpYSeo0AAkTmwjvMlp3UhBAD5wegwwXvfzAPEGHPcaWCBO8UYmaapNgghZBPt8N7+mvDxfOAcTh5MeamdWjnly+lejADS0gPgh81+iasCQBS40+9rN3o8TrazRX7YWh3xw6bgRZXBf/XV4O41pepFKuZgY51BS7KOc15XPes43+Yxf4wise/80mfg+cQCFZwv0tJnOC19CTe72kUq3V0JmKXK3AdaKIpUGuZZjAAAAABJRU5ErkJggg==" />
-  <!-- This is the CSS style sheet for the web app. -->
-  <!-- これは Web アプリの CSS スタイル シートです。 -->
   <style>
     * {
       box-sizing: border-box;
@@ -47,16 +43,9 @@
       }
     }
   </style>
-  <!-- This is the web app's title that shows on tabs. -->
-  <!-- これはタブに表示される Web アプリのタイトルです。 -->
-  <title>Goaty the Getter</title>
 </head>
 
 <body>
-  <!-- This canvas has the game-box class and is 160x160 pixels. -->
-  <!-- This canvas will be used for rendering the game. -->
-  <!-- このキャンバスは game-box クラスを持ち、160x160 ピクセルです。 -->
-  <!-- このキャンバスはゲームのレンダリングに使用されます。 -->
   <canvas class="game-box" width="160" height="160"></canvas>
 </body>
 
@@ -74,18 +63,25 @@
     pointNumbers: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAAAQCAYAAABA4nAoAAAAAXNSR0IArs4c6QAAAjhJREFUaIHtWlGSwyAIhZ29Qv57gd7/IL1A/nuI7E/MIEFFMGq3eTOdad08QRARNgA3bnwxMDG+VT7/X/ich4VxrVyvHl5eL/mt+N3wK4xt79dDfHh5rhsoF8HnWJ6rVievfBc/cLm+qfEUPwWFHZroP0p+A35X/LDfSeUBDuNqTxkLvPJH6+/FaP0j+ctzjQKm1v4GfjQX+7TAaT4pAxwIypdOlavglT+L/l7+CP132bh/zwbmFXwAfdaFigB5vx5hvg0AMBkALRbgwQwOgDYnjynlc/0reRFGHQA9wTOPdAUPYyQI8hlgAJA4+yhAKxyINZslhxabZjc0X48FWq70nMkeVHfr6W3gZ69X5LtoD2njl56ZLQAA4sWd7pRQ3gz87xtLpVcWYcidTmRbCkBt96kVkGbLRCMjp0OWr4HEEfZAkUs3Oq9D6O8ZAyDAsvlnQHRtYWnX3EUjc9bYYIQNxSzc4xpWqhVCUNAg4F2gWeBxHK/0kRWT2StB6FzwjwFIZWvlS7pY+Qa06uIg+6gh2dzphwP89AeYMwBcmz9EuBHccbUOlNp2aHEcWbeJD87T3yjf27rM2dwUUBx8byQDgER7zw5QSla1YQfpDyQAD32/oQsTENbf2/5SkEqZhD+brQFmcJzjP8pD9ffKdnZh3Hd/bxfIwwuo8LX6hkDmRIBzBsimuw8oREfr75V/qhk6F7Fe+S3tb64jlHMeAxJmeRkthatf5irNN/vLZN726Wj9b9y40QN/9hTCO7LC5+oAAAAASUVORK5CYII=',
   }
 
+  const setImages = () => {
+    Object.entries(gameImages).forEach((imageSet) => {
+      const gameImage = new Image();
+      gameImage.src = imageSet[1];
+      gameImages[imageSet[0]] = gameImage;
+    })
+  }
+
+  setImages();
+
   /**
   * A delicious berry
   */
   class Berry {
     constructor() {
       this.type = 'Berry';
-
       this.destroyed = false;
       this.destroyTimer = 0;
-
-      this.image = new Image();
-      this.image.src = gameImages.berry;
+      this.image = gameImages.berry;
 
       // This is used to occasionally spawn rare instances.
       // これは、珍しいインスタンスを時折生成するために使用されます。
@@ -235,11 +231,13 @@
     }
   }
 
+  /**
+  * In this version floratrap does nothing.
+  */
   class Floratrap {
     constructor(options) {
-      this.image = new Image();
-      this.image.src = gameImages.floratrap;
-
+      this.type = 'Floratrap';
+      this.image = gameImages.floratrap;
       this.dx = options?.dx || 0;
       this.dy = options?.dy || 120;
       this.dw = 16;
@@ -294,8 +292,7 @@
   */
   class GameOver {
     constructor() {
-      this.image = new Image();
-      this.image.src = gameImages.gameOver;
+      this.image = gameImages.gameOver;
     }
 
     render() {
@@ -309,8 +306,7 @@
   */
   class Goaty {
     constructor() {
-      this.image = new Image();
-      this.image.src = gameImages.goaty;
+      this.image = gameImages.goaty;
 
       this.hurt = false;
       this.inincibleCounter = 0;
@@ -408,8 +404,7 @@
   */
   class Ground {
     constructor() {
-      this.image = new Image();
-      this.image.src = gameImages.ground;
+      this.image = gameImages.ground;
 
       this.dx = 0;
       this.dy = 144;
@@ -430,8 +425,7 @@
     constructor() {
       this.type = 'Monking';
 
-      this.image = new Image();
-      this.image.src = gameImages.monking;
+      this.image = gameImages.monking;
 
       this.speed = Math.floor(Math.random() * 3);
 
@@ -483,10 +477,8 @@
   */
   class HUD {
     constructor() {
-      this.image = new Image();
-      this.image.src = gameImages.pointNumbers;
-      this.heartImage = new Image();
-      this.heartImage.src = gameImages.heartImage;
+      this.image = gameImages.pointNumbers;
+      this.heartImage = gameImages.heartImage;
       this.dx = 0;
       this.dy = 0;
       this.dw = 16;
