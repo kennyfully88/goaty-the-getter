@@ -31,6 +31,10 @@
       image-rendering: pixelated;
     }
 
+    .game-box.game-over {
+      background-color: #ffe0e0;
+    }
+
     @media (orientation: landscape) {
       .game-box {
         height: 100%;
@@ -643,6 +647,10 @@
       this.hud.render();
 
       if (gameLogic.lives <= 0) {
+        if (!gameBox.domRef.classList.contains('game-over')) {
+          gameBox.domRef.classList.add('game-over');
+        }
+
         this.gameOver.render();
         this.waitForNewGame();
         return;
@@ -696,6 +704,7 @@
     }
 
     setGame() {
+      gameBox.domRef.classList.remove('game-over');
       controls.tapped = false;
       gameLogic.points = 0;
       gameLogic.lives = 3;
