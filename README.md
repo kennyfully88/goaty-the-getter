@@ -1,10 +1,10 @@
 # Goaty the Getter Web
 
-https://kennyfully88.github.io/goaty_the_getter_web/
+https://kennyfully88.github.io/goaty-the-getter_web/
 
 ## Goaty the Getter
 
-In this game, you will help Goaty by collecting falling berries in order to gain points. You can do this by tapping or pressing the left or right of the game screen so that Goaty can move. However, watch out for falling monkeys! If a falling monkey bumps into Goaty, Goaty will lose a heart. When Goaty loses all the hearts, it's game over. How many points can you help Goaty get before game over?
+In this game, you will help Goaty by collecting falling berries to gain points. You can do this by tapping or pressing the left or right of the game screen so that Goaty can move. However, watch out for falling monkeys! If a falling monkey bumps into Goaty, Goaty will lose a heart. When Goaty loses all the hearts, it's game over. How many points can you help Goaty get before game over?
 
 ## ゴッティー・ザ・ゲッター
 
