@@ -577,7 +577,7 @@
 
       // Touch controls
       // タッチコントロール
-      gameBox.domRef.addEventListener('touchstart', (e) => {
+      document.querySelector('body').addEventListener('touchstart', (e) => {
         this.setPosition(e);
 
         if (gameLogic.lives <= 0) {
@@ -585,11 +585,11 @@
         }
       });
 
-      gameBox.domRef.addEventListener('touchmove', (e) => {
+      document.querySelector('body').addEventListener('touchmove', (e) => {
         this.setPosition(e);
       });
 
-      gameBox.domRef.addEventListener('touchend', () => {
+      document.querySelector('body').addEventListener('touchend', () => {
         this.direction = 'none';
       });
     }
