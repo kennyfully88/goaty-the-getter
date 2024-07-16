@@ -1,0 +1,15 @@
+{
+  "name": "goaty-the-getter-web",
+  "version": "1.0.0",
+  "description": "https://kennyfully88.github.io/goaty_the_getter_web/",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "FURU CODE",
+  "license": "ISC",
+  "dependencies": {
+    "prettier": "3.3.3"
+  }
+}

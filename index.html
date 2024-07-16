@@ -242,7 +242,6 @@
       this.dy = options?.dy || 120;
       this.dw = 16;
       this.dh = 24;
-
       this.frameCount = 0;
       this.frameCountMax = 60;
 
@@ -559,6 +558,10 @@
         if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
           this.direction = e.key;
         }
+
+        if (e.key === 'Enter') {
+          if (gameLogic.lives <= 0) this.tapped = true;
+        }
       });
 
       window.addEventListener('keyup', (e) => {
@@ -571,10 +574,7 @@
       // タッチコントロール
       document.querySelector('body').addEventListener('touchstart', (e) => {
         this.setPosition(e);
-
-        if (gameLogic.lives <= 0) {
-          this.tapped = true;
-        }
+        if (gameLogic.lives <= 0) this.tapped = true;
       });
 
       document.querySelector('body').addEventListener('touchmove', (e) => {
@@ -709,13 +709,8 @@
       this.timer = 180;
     }
 
-    resetGame() {
-      this.setGame();
-      this.start();
-    }
-
     waitForNewGame() {
-      if (controls.tapped) this.resetGame();
+      if (controls.tapped) this.start();
 
       if (gameLogic.lives <= 0) {
         requestAnimationFrame(() => {
