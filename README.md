@@ -1,6 +1,6 @@
 # Goaty the Getter Web
 
-https://kennyfully88.github.io/goaty-the-getter_web/
+https://kennyfully88.github.io/goaty-the-getter/
 
 ## Goaty the Getter
 
