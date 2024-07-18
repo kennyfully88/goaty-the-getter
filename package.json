@@ -8,8 +8,5 @@
   },
   "keywords": [],
   "author": "FURU CODE",
-  "license": "ISC",
-  "dependencies": {
-    "prettier": "3.3.3"
-  }
+  "license": "ISC"
 }
