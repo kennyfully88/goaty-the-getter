@@ -18,6 +18,8 @@
     }
 
     body {
+      background-image: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAR5JREFUOI3NlL1qwzAUhU+LuxRDlkC6a9CcuSAyZMkWyMN4T6GFvkHHvoE3L87gkMlLhhBIIHmBZDOlk0EdVAn92h4cyAcGXfnew9XxlYF750EPlsmIA0CexgCA6fwHduxbr49nQ0eJBbm+iicAo4RLnchRrhJnq95XInnsvgsemVHCi8MJqBK8vX+3FuZpjKJcCJHBp9JyO9QKJLpfMg7x2JRUlAvVhS+WMEpcwb4wPdy8oN5X+MgurYV5GmP19QwAeJrslFYnD22aPIyMpOFGjEYmvrL0q95mInk8AwA1BTJm9Bfr4xmA5mFTR21IMaPDLnSZT/PI/4S61ff18WGUqC69N8XG9tBGvym9z6EBo0T+OTgA7ot965s21Tt/gHyvgkLxGbIAAAAASUVORK5CYII=);
+      background-repeat: repeat;
       align-items: center;
       background-color: #000000;
       display: flex;
@@ -238,6 +240,80 @@
   }
 
   /**
+  * A heart
+  */
+  class Heart {
+    constructor(options) {
+      this.type = 'Heart';
+      this.image = gameImages.heartImage;
+      this.isDestroyed = false;
+      this.speed = Math.floor(Math.random() * 3);
+
+      this.dx = Math.floor(Math.random() * 144);
+      this.dy = -16;
+      this.dw = 16;
+      this.dh = 16;
+
+      this.frameCount = 0;
+      this.frameCountMax = 60;
+
+      this.animations = {
+        idle: {
+          frames: [
+            {sx: 0, sy: 0, sw: 16, sh: 16},
+          ]
+        }
+      }
+
+      this.currentAnimation = 'idle';
+    }
+
+
+    render() {
+      const currentFrame = Math.floor(
+        this.frameCount /
+        (this.frameCountMax /
+          this.animations[this.currentAnimation].frames.length),
+      );
+
+      gameBox.ctx.drawImage(
+        this.image,
+        this.animations[this.currentAnimation].frames[currentFrame].sx,
+        this.animations[this.currentAnimation].frames[currentFrame].sy,
+        this.animations[this.currentAnimation].frames[currentFrame].sw,
+        this.animations[this.currentAnimation].frames[currentFrame].sh,
+        this.dx,
+        this.dy,
+        this.dw,
+        this.dh,
+      );
+    }
+
+    update(options) {
+      if (this.frameCount >= this.frameCountMax - 1) {
+        this.frameCount = 0;
+      } else {
+        this.frameCount++;
+      }
+
+      this.dy += this.speed + 1;
+
+      if (this.dy >= 160 || this.isDestroyed) {
+        this.destroy({hearts: options.hearts});
+      }
+    }
+
+    destroy(options) {
+      options.hearts.splice(options.hearts.indexOf(this), 1);
+    }
+
+    action() {
+      this.isDestroyed = true;
+      if (gameLogic.lives < 3) gameLogic.lives++;
+    }
+  }
+
+  /**
   * In this version floratrap does nothing.
   */
   class Floratrap {
@@ -405,6 +481,8 @@
 
       // Check collisions of goaty and berries
       this.checkCollisions(options.berries);
+      // Check collisions of goath and hearts
+      this.checkCollisions(options.hearts);
       // Check collisions of goaty and monkings
       this.checkCollisions(options.monkings);
     }
@@ -420,6 +498,8 @@
           // Berry
           // ベリー
           if (objects[i]?.type === 'Berry') {
+            objects[i].action();
+          } else if (objects[i].type === 'Heart') {
             objects[i].action();
           } else if (objects[i].type === 'Monking') {
             if (!this.hurt) {
@@ -696,6 +776,7 @@
       this.ground.render();
       this.floratraps.forEach((floratrap) => floratrap.render());
       this.berries.forEach((berry) => berry.render());
+      this.hearts.forEach((heart) => heart.render());
       this.goaty.render();
       this.monkings.forEach((monking) => monking.render());
       this.hud.render();
@@ -719,24 +800,31 @@
       this.floratraps.forEach((floratrap) => floratrap.update());
 
       this.berries.forEach((berry) => berry.update({berries: this.berries}));
+
+      this.hearts.forEach((heart) => heart.update({hearts: this.hearts}));
+
       this.monkings.forEach((monking) =>
         monking.update({monkings: this.monkings}),
       );
 
-      this.goaty.update({berries: this.berries, monkings: this.monkings});
+      this.goaty.update({berries: this.berries, hearts: this.hearts, monkings: this.monkings});
 
       if (this.timer <= 0) {
-        const rng = Math.floor(Math.random() * 5);
+        const rng = Math.floor(Math.random() * 100);
         //  Reset this timer if it is out of time.
         this.timer = Math.floor(Math.random() * 180) + 10;
 
-        if (rng > 0) {
+        if (rng > 40) {
           if (this.berries.length < 20) {
             this.berries.push(new Berry());
           }
-        } else {
+        } else if (rng > 5) {
           if (this.monkings.length < 20) {
             this.monkings.push(new Monking());
+          }
+        } else {
+          if (this.hearts.length < 20) {
+            this.hearts.push(new Heart());
           }
         }
       } else {
@@ -763,6 +851,7 @@
       gameLogic.points = 0;
       gameLogic.lives = 3;
       this.berries = [];
+      this.hearts = [];
       this.floratraps = [new Floratrap(), new Floratrap({dx: 144})];
       this.gameOver = new GameOver();
       this.goaty = new Goaty();
