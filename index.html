@@ -381,10 +381,10 @@
 
       gameBox.ctx.drawImage(
         this.image,
-        this.animations[this.hurt ? 'hurt' : this.currentAnimation].frames[this.hurt ? 0 : currentFrame].sx,
-        this.animations[this.hurt ? 'hurt' : this.currentAnimation].frames[this.hurt ? 0 : currentFrame].sy,
-        this.animations[this.hurt ? 'hurt' : this.currentAnimation].frames[this.hurt ? 0 : currentFrame].sw,
-        this.animations[this.hurt ? 'hurt' : this.currentAnimation].frames[this.hurt ? 0 : currentFrame].sh,
+        this.animations[this.currentAnimation].frames[currentFrame].sx,
+        this.animations[this.currentAnimation].frames[currentFrame].sy,
+        this.animations[this.currentAnimation].frames[currentFrame].sw,
+        this.animations[this.currentAnimation].frames[currentFrame].sh,
         this.dx,
         this.dy,
         this.dw,
@@ -418,13 +418,19 @@
           ],
         },
         left: {
-          frames: [{sx: 32, sy: 16 * this.goatyType, sw: 16, sh: 16}],
+          frames: [
+            {sx: 32, sy: 16 * this.goatyType, sw: 16, sh: 16}
+          ],
         },
         right: {
-          frames: [{sx: 48, sy: 16 * this.goatyType, sw: 16, sh: 16}],
+          frames: [
+            {sx: 48, sy: 16 * this.goatyType, sw: 16, sh: 16}
+          ],
         },
         hurt: {
-          frames: [{sx: 64, sy: 16 * this.goatyType, sw: 16, sh: 16}],
+          frames: [
+            {sx: 64, sy: 16 * this.goatyType, sw: 16, sh: 16}
+          ],
         },
       };
 
@@ -724,6 +730,7 @@
       this.floratraps.forEach((floratrap) => floratrap.render());
       this.berries.forEach((berry) => berry.render());
       this.hearts.forEach((heart) => heart.render());
+      this.wooCats.forEach((wooCat) => wooCat.render());
       this.goaty.render();
       this.monkings.forEach((monking) => monking.render());
       this.hud.render();
@@ -745,9 +752,8 @@
       this.floratraps.forEach((floratrap) => floratrap.update());
       this.berries.forEach((berry) => berry.update({berries: this.berries}));
       this.hearts.forEach((heart) => heart.update({hearts: this.hearts}));
-      this.monkings.forEach((monking) =>
-        monking.update({monkings: this.monkings}),
-      );
+      this.monkings.forEach((monking) => monking.update({monkings: this.monkings}));
+      // this.wooCats.forEach((wooCat) => wooCat.update());
 
       this.goaty.update({
         berries: this.berries,
@@ -763,6 +769,8 @@
           if (this.berries.length < 20) {
             this.berries.push(new Berry());
           }
+        } else if (rng <= 10 && gameLogic.points >= 25000 && gameLogic.lives >= 3 && this.wooCats.length <= 0) {
+          this.wooCats.push(new WooCat());
         } else if (rng > 5) {
           if (this.monkings.length < 20) {
             this.monkings.push(new Monking());
@@ -799,6 +807,7 @@
       this.ground = new Ground();
       this.hud = new HUD();
       this.monkings = [];
+      this.wooCats = [];
       this.timer = 180;
     }
 
