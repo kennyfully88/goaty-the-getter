@@ -95,6 +95,10 @@
 
   setImages();
 
+  const calcCurrentFrame = (frameCount, frameCountMax, animations, currentAnimation) => {
+    return Math.floor(frameCount / (frameCountMax / animations[currentAnimation].frames.length));
+  }
+
   class Berry {
     constructor() {
       this.type = 'Berry';
@@ -245,11 +249,7 @@
     }
 
     render() {
-      const currentFrame = Math.floor(
-        this.frameCount /
-        (this.frameCountMax /
-          this.animations[this.currentAnimation].frames.length),
-      );
+      const currentFrame = calcCurrentFrame(this.frameCount, this.frameCountMax, this.animations, this.currentAnimation);
 
       gameBox.ctx.drawImage(
         this.image,
@@ -313,11 +313,7 @@
     }
 
     render() {
-      const currentFrame = Math.floor(
-        this.frameCount /
-        (this.frameCountMax /
-          this.animations[this.currentAnimation].frames.length),
-      );
+      const currentFrame = calcCurrentFrame(this.frameCount, this.frameCountMax, this.animations, this.currentAnimation);
 
       gameBox.ctx.drawImage(
         this.image,
@@ -355,7 +351,49 @@
     constructor() {
       this.image = gameImages.wooCat;
       this.frameCount = 0;
-      this.frameCountMax = 0;
+      this.frameCountMax = 60;
+      this.invincibleCounter = 0;
+      this.dx = 0;
+      this.dy = 16;
+      this.dw = 34;
+      this.dh = 48;
+
+      this.animations = {
+        idle: {
+          frames: [
+            {sx: 0, sy: 0, sw: 34, sh: 48},
+            {sx: 0, sy: 0, sw: 34, sh: 48},
+          ],
+        },
+        hurt: {
+          frames: [
+            {sx: 0, sy: 0, sw: 34, sh: 48},
+          ],
+        },
+      };
+
+      this.currentAnimation = 'idle';
+
+    }
+
+    render() {
+      const currentFrame = calcCurrentFrame(this.frameCount, this.frameCountMax, this.animations, this.currentAnimation);
+
+      gameBox.ctx.drawImage(
+        this.image,
+        this.animations[this.hurt ? 'hurt' : this.currentAnimation].frames[this.hurt ? 0 : currentFrame].sx,
+        this.animations[this.hurt ? 'hurt' : this.currentAnimation].frames[this.hurt ? 0 : currentFrame].sy,
+        this.animations[this.hurt ? 'hurt' : this.currentAnimation].frames[this.hurt ? 0 : currentFrame].sw,
+        this.animations[this.hurt ? 'hurt' : this.currentAnimation].frames[this.hurt ? 0 : currentFrame].sh,
+        this.dx,
+        this.dy,
+        this.dw,
+        this.dh,
+      );
+    }
+
+    update(options) {
+
     }
   }
 
@@ -394,7 +432,7 @@
     }
 
     render() {
-      const currentFrame = Math.floor(this.frameCount / (this.frameCountMax / this.animations[this.currentAnimation].frames.length));
+      const currentFrame = calcCurrentFrame(this.frameCount, this.frameCountMax, this.animations, this.currentAnimation);
 
       gameBox.ctx.drawImage(
         this.image,
@@ -512,7 +550,7 @@
     }
 
     render() {
-      const currentFrame = Math.floor(this.frameCount / (this.frameCountMax / this.animations[this.currentAnimation].frames.length));
+      const currentFrame = calcCurrentFrame(this.frameCount, this.frameCountMax, this.animations, this.currentAnimation);
 
       gameBox.ctx.drawImage(
         this.image,
