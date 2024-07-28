@@ -360,7 +360,10 @@
   // WooCats rock attack
   class Rock {
     constructor(config) {
+      this.type = 'Rock';
       this.image = gameImages.rock;
+      this.rng = Math.floor(Math.random() * 100);
+      this.rockType = this.rng > 75 ? 'gray' : 'red';
       this.dx = config?.dx ? config?.dx : 0;
       this.dy = config?.dy ? config?.dy : 55;
       this.dw = 9;
@@ -372,7 +375,7 @@
     render() {
       gameBox.ctx.drawImage(
         this.image,
-        0,
+        this.rockType === 'gray' ? 9 : 0,
         0,
         9,
         9,
@@ -558,6 +561,7 @@
       this.checkCollisions(options.berries);
       this.checkCollisions(options.hearts);
       this.checkCollisions(options.monkings);
+      this.checkCollisions(options.wooCatAttacks);
     }
 
     checkCollisions(objects) {
@@ -578,6 +582,16 @@
               this.hurt = true;
               this.invincibleCounter = 60;
               objects[i].action();
+            }
+          } else if (objects[i].type === 'Rock') {
+            if (objects[i].rockType === 'red') {
+              if (!this.hurt) {
+                goatyHurtSound.play();
+                this.hurt = true;
+                this.invincibleCounter = 60;
+              }
+            } else {
+              // do something for goaty attack 
             }
           }
         }
@@ -833,6 +847,7 @@
         berries: this.berries,
         hearts: this.hearts,
         monkings: this.monkings,
+        wooCatAttacks: this.wooCatAttacks,
       });
 
       if (this.timer <= 0) {
