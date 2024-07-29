@@ -15,7 +15,7 @@
       margin: 0;
       padding: 0;
       user-select: none;
-      /*  Used to make the program behave closer to an mobile app */
+      /*  Used to make the program behave closer to a mobile app */
     }
 
     body {
@@ -499,6 +499,7 @@
       this.frameCount = 0;
       this.frameCountMax = 60;
       this.invincibleCounter = 0;
+      this.hurt = false;
       this.dx = -36;
       this.dy = 16;
       this.dw = 36;
@@ -518,13 +519,19 @@
           frames: [
             {sx: 144, sy: 0, sw: 36, sh: 48},
             {sx: 180, sy: 0, sw: 36, sh: 48},
+            {sx: 144, sy: 0, sw: 36, sh: 48},
+            {sx: 180, sy: 0, sw: 36, sh: 48},
+            {sx: 144, sy: 0, sw: 36, sh: 48},
+            {sx: 180, sy: 0, sw: 36, sh: 48},
+            {sx: 144, sy: 0, sw: 36, sh: 48},
+            {sx: 180, sy: 0, sw: 36, sh: 48},
           ],
         },
       };
 
       this.currentAnimation = 'idle';
 
-      this.aiModes = ['spawn', 'move', 'despawn',];
+      this.aiModes = ['spawn', 'move', 'despawn'];
 
       this.currentAiMode = this.aiModes[0];
 
@@ -534,14 +541,14 @@
     }
 
     render() {
-      const currentFrame = calcCurrentFrame(this.frameCount, this.frameCountMax, this.animations, this.currentAnimation);
+      const currentFrame = calcCurrentFrame(this.frameCount, this.frameCountMax, this.animations, this.hurt ? 'hurt' : this.currentAnimation);
 
       gameBox.ctx.drawImage(
         this.image,
-        this.animations[this.currentAnimation].frames[currentFrame].sx,
-        this.animations[this.currentAnimation].frames[currentFrame].sy,
-        this.animations[this.currentAnimation].frames[currentFrame].sw,
-        this.animations[this.currentAnimation].frames[currentFrame].sh,
+        this.animations[this.hurt ? 'hurt' : this.currentAnimation].frames[currentFrame].sx,
+        this.animations[this.hurt ? 'hurt' : this.currentAnimation].frames[currentFrame].sy,
+        this.animations[this.hurt ? 'hurt' : this.currentAnimation].frames[currentFrame].sw,
+        this.animations[this.hurt ? 'hurt' : this.currentAnimation].frames[currentFrame].sh,
         this.dx,
         this.dy,
         this.dw,
@@ -572,7 +579,9 @@
       }
 
       if (this.currentAiMode === 'move') {
-        if (this.decisionTimer <= 0) {
+        if (this.hurt) {
+          this.updateCounters();
+        } else if (this.decisionTimer <= 0) {
           this.decisionTimer = Math.floor(Math.random() * 150) + 30;
           this.decidedPosition = Math.floor(Math.random() * 160) - 36;
           if (this.decidedPosition < 0) this.decidedPosition = 0;
@@ -582,13 +591,18 @@
           } else if (this.decidedPosition < this.dx) {
             this.dx--;
           }
-
           this.decisionTimer--;
         }
+
+        this.checkCollisions(options.reflected, options);
+        this.updateCounters(options);
       }
 
-      //testing
-      if (this.frameCount === 0) {
+
+    }
+
+    updateCounters(options) {
+      if (this.frameCount === 0 && !this.hurt) {
         const spawnRng = Math.floor(Math.random() * 5);
 
         if (spawnRng > 1) {
@@ -596,8 +610,29 @@
         } else {
           options.wooCatAttacks.push(new GoEnCoin(new Rock({dx: this.dx + (Math.floor(Math.random() * 4) * 9)})));
         }
+      } else {
+        this.invincibleCounter--;
+        if (this.invincibleCounter <= 0) this.hurt = false;
       }
     }
+
+    checkCollisions(objects, options) {
+      for (let i = 0; i < objects.length; i++) {
+        if (
+          this.dx + this.dw > objects[i].dx &&
+          this.dx < objects[i].dx + objects[i].dw &&
+          this.dy + this.dh > objects[i].dy &&
+          this.dy < objects[i].dy + objects[i].dh
+        ) {
+          if (objects[i].reflectedStatus && !this.hurt) {
+            this.hurt = true;
+            this.invincibleCounter = 60;
+            this.hp--;
+          }
+        }
+      }
+    }
+
   }
 
   class Goaty {
@@ -975,7 +1010,7 @@
       this.hearts.forEach((heart) => heart.update({hearts: this.hearts}));
       this.monkings.forEach((monking) => monking.update({monkings: this.monkings}));
       this.wooCatAttacks.forEach((wooCatAttack) => wooCatAttack.update({wooCatAttacks: this.wooCatAttacks}));
-      this.wooCats.forEach((wooCat) => wooCat.update({wooCatAttacks: this.wooCatAttacks}));
+      this.wooCats.forEach((wooCat) => wooCat.update({wooCatAttacks: this.wooCatAttacks, reflected: this.reflected}));
       this.reflected.forEach((reflectedItem) => reflectedItem.update({wooCatAttacks: this.wooCatAttacks, reflected: this.reflected}));
 
       this.goaty.update({
