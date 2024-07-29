@@ -563,7 +563,7 @@
         this.frameCount++;
       }
 
-      if (this.currentAiMode === 'spawn') {
+      if (this.currentAiMode === this.aiModes[0]) {
         if (this.dx + 18 < 80) {
           this.dx++;
         } else {
@@ -578,7 +578,7 @@
         }
       }
 
-      if (this.currentAiMode === 'move') {
+      if (this.currentAiMode === this.aiModes[1]) {
         if (this.hurt) {
           this.updateCounters();
         } else if (this.decisionTimer <= 0) {
@@ -598,8 +598,19 @@
         this.updateCounters(options);
       }
 
+      if (this.currentAiMode === this.aiModes[2]) {
+        this.dx++;
 
+        if (this.dx > 160) {
+          this.destroy({wooCats: options.wooCats});
+        }
+      }
     }
+
+    destroy(options) {
+      options.wooCats.splice(options.wooCats.indexOf(this), 1);
+      gameLogic.points += gameLogic.lives >= 3 ? 30000 : 10000;
+    };
 
     updateCounters(options) {
       if (this.frameCount === 0 && !this.hurt) {
@@ -619,15 +630,16 @@
     checkCollisions(objects, options) {
       for (let i = 0; i < objects.length; i++) {
         if (
-          this.dx + this.dw > objects[i].dx &&
-          this.dx < objects[i].dx + objects[i].dw &&
-          this.dy + this.dh > objects[i].dy &&
+          this.dx + this.dw - 3 > objects[i].dx &&
+          this.dx + 3 < objects[i].dx + objects[i].dw &&
+          this.dy + 24 > objects[i].dy &&
           this.dy < objects[i].dy + objects[i].dh
         ) {
           if (objects[i].reflectedStatus && !this.hurt) {
             this.hurt = true;
-            this.invincibleCounter = 60;
+            this.invincibleCounter = 120;
             this.hp--;
+            if (this.hp <= 0) this.currentAiMode = this.aiModes[2];
           }
         }
       }
@@ -1010,7 +1022,7 @@
       this.hearts.forEach((heart) => heart.update({hearts: this.hearts}));
       this.monkings.forEach((monking) => monking.update({monkings: this.monkings}));
       this.wooCatAttacks.forEach((wooCatAttack) => wooCatAttack.update({wooCatAttacks: this.wooCatAttacks}));
-      this.wooCats.forEach((wooCat) => wooCat.update({wooCatAttacks: this.wooCatAttacks, reflected: this.reflected}));
+      this.wooCats.forEach((wooCat) => wooCat.update({wooCats: this.wooCats, wooCatAttacks: this.wooCatAttacks, reflected: this.reflected}));
       this.reflected.forEach((reflectedItem) => reflectedItem.update({wooCatAttacks: this.wooCatAttacks, reflected: this.reflected}));
 
       this.goaty.update({
