@@ -3,6 +3,10 @@
   "short_name": "Goaty",
   "display": "fullscreen",
   "start_url": "./",
+  "description": "In this game, you will help Goaty by collecting falling berries to gain points. You can do this by tapping or pressing the left or right of the game screen so that Goaty can move. However, watch out for falling monkeys! If a falling monkey bumps into Goaty, Goaty will lose a heart. When Goaty loses all the hearts, it's game over. How many points can you help Goaty get before game over?",
+  "categories": [
+    "games"
+  ],
   "icons": [
     {
       "src": "./192.png",
