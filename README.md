@@ -4,14 +4,14 @@ https://kennyfully88.github.io/goaty-the-getter/
 
 ## Important Note
 
-WooCat (the somewhat mini-boss in the Flutter version of the game) is currently being reworked to appear in the web version of the game. Goaty doesn't have an attack in the current web version of the game so special code is being written for collision to WooCat attacks where some will be bounced back at him. Moreover, the following conditions will have to be met if the player wants a 10% chance to encounter WooCat...
+Players can now battle WooCat. The following conditions will have to be met if the player wants a 10% chance to encounter WooCat...
 
 - Have a score of 25000 or more.
 - Have full health (in this version that's 3 hearts).
 
 # 重要なノート
 
-WooCat（Flutter版のミニボス）は現在、ウェブ版に登場するために作り直されています。ゴッティは現在のウェブ版に攻撃はないから、特別なコードはWooCat攻撃への衝突のために書かれています。さらに、プレイヤーが WooCatに出会う10％のチャンスを望んでいる場合、次の条件を満たす必要があります...
+今プレイヤーが WooCatとバトルする事が出来ます！プレイヤーが WooCatに出会う10％のチャンスを望んでいる場合、次の条件を満たす必要があります...
 
 - 25000以上のスコア。
 - 完全な健康（このバージョンでは3つのハートです）。
